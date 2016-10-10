@@ -8,19 +8,18 @@
 
 class compress{
   public:
+   bool fileOpen(char *fileName);
    void weights();
    void tWeights();
-   compress(){weight[256] = {0};};
-
+   compress();
+   ~compress();
 
   private:
 
 
   protected:
-    int weight[256];
-    std::fstream file;
-   
-
+   std::fstream file;
+   int weight[256];
 };
 
 class node{
