@@ -24,11 +24,22 @@ class compress{
 
 class node{
   public:
+    node(char,long int){};
+    
+    //properties
     node *left;
     node *right;
     node *next;
     char info; 
     long int weight;
+};
+
+class priorityQueue{
+
+};
+
+class binaryTree{
+
 };
 
 #endif
