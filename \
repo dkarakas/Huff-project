@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
   comp.weights();
   comp.createPriorityQueue();
   comp.printQueue();
-  //comp.tWeights();
+  comp.tWeights();
   return 0;
 }
 
@@ -112,30 +112,33 @@ void compress::enqueuePrior(long int weight,char info){
     return;
   }
 
-  dummy.info = 'Q';
+  if(priority_Head == NULL){
+    cout << "FIRST";
+    priority_Head = new_Node_Prior;
+  }
+
+
   dummy.next = priority_Head;
   cur = priority_Head;
   prev = &dummy;
   while(cur != NULL){
-    if(new_Node_Prior->weight <= cur->weight){
+    if(new_Node_Prior->weight <= cur->weight)
        break;
-    }
     else{
       prev = cur;
       cur = cur->next;
-      break;
     }
   }
   prev->next = new_Node_Prior;
   new_Node_Prior->next = cur;
   priority_Head = dummy.next;
+
 }
 
 void compress::printQueue(){
   node *cur = priority_Head;
   while(cur != NULL){
     cout << cur->info << " " << cur->weight << endl;
-    cur = cur->next;
   }
 }
 //NODE CLASS

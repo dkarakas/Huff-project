@@ -5,26 +5,9 @@
 #include <iostream>
 #include <fstream>
 
-
-class compress{
-  public:
-   bool fileOpen(char *fileName);
-   void weights();
-   void tWeights();
-   compress();
-   ~compress();
-
-  private:
-
-
-  protected:
-   std::fstream file;
-   int weight[256];
-};
-
 class node{
   public:
-    node(char,long int){};
+    //node(char,long int){};
     
     //properties
     node *left;
@@ -34,12 +17,27 @@ class node{
     long int weight;
 };
 
-class priorityQueue{
 
+class compress{
+  public:
+   bool fileOpen(char *fileName);
+   void weights();
+   void tWeights();
+   compress();
+   ~compress();
+   node *createNode(char,long int);
+   //Priority queueu func
+   void createPriorityQueue();
+   void enqueuePrior(long int, char);
+   void printQueue();
+
+
+  private:
+   node *priority_Head;
+   std::fstream file;
+   long int weight[256];
+   int weight_total;
 };
 
-class binaryTree{
-
-};
 
 #endif
