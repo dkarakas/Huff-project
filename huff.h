@@ -29,7 +29,10 @@ class compress{
    //Priority queueu func
    void createPriorityQueue();
    void enqueuePrior(long int, char);
+   void dequeuePrior();//not implemented
+   node *combineTwoNodes(node *, node*);//not implemented
    void printQueue();
+   void constructTree();
 
 
   private:

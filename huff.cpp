@@ -138,6 +138,8 @@ void compress::printQueue(){
     cur = cur->next;
   }
 }
+
+
 //NODE CLASS
 //node::node(char infoChar,long int weightCalc){ 
 //  left = NULL;
