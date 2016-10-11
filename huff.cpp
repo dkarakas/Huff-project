@@ -18,6 +18,10 @@ int main(int argc, char *argv[]){
   comp.weights();
   comp.createPriorityQueue();
   comp.printQueue();
+  cout << endl;
+  comp.constructTree();
+  comp.preTravTree(comp.getHead());
+  cout << endl;
   //comp.tWeights();
   return 0;
 }
@@ -35,7 +39,6 @@ compress::compress(){
      for(int i = 0; i < 256; i++){weight[i] = 0;}
     
      priority_Head = NULL;
-     weight_total = 0;
 }
 
 compress::~compress(){
@@ -94,7 +97,6 @@ void compress::createPriorityQueue(){
   for(int i = 0; i < 256; i++){
     if(weight[i] != 0){
       enqueuePrior(weight[i],(char)i);
-      weight_total += weight[i];
     }
   }
 
@@ -112,7 +114,6 @@ void compress::enqueuePrior(long int weight,char info){
     return;
   }
 
-  dummy.info = 'Q';
   dummy.next = priority_Head;
   cur = priority_Head;
   prev = &dummy;
@@ -123,7 +124,6 @@ void compress::enqueuePrior(long int weight,char info){
     else{
       prev = cur;
       cur = cur->next;
-      break;
     }
   }
   prev->next = new_Node_Prior;
@@ -139,11 +139,77 @@ void compress::printQueue(){
   }
 }
 
+void compress::enqueueTree(node * new_Node_Prior ){
+  node * cur = NULL;
+  node * prev  = NULL;
+  node dummy;
 
-//NODE CLASS
-//node::node(char infoChar,long int weightCalc){ 
-//  left = NULL;
-//  right = NULL;
-//  next = NULL;
-//  info = infoChar;
-//  weight = weightCalc;
+  if(new_Node_Prior == NULL){
+    cerr << "Error allocating memory";
+    return;
+  }
+
+  dummy.next = priority_Head;
+  cur = priority_Head;
+  prev = &dummy;
+  while(cur != NULL){
+    if(new_Node_Prior->weight <= cur->weight){
+       break;
+    }
+    else{
+      prev = cur;
+      cur = cur->next;
+    }
+  }
+  prev->next = new_Node_Prior;
+  new_Node_Prior->next = cur;
+  priority_Head = dummy.next;
+}
+
+
+node *compress::dequeuePrior(){
+  node *returnNode = priority_Head;
+  if(priority_Head == NULL)
+    return NULL;
+
+  priority_Head = priority_Head->next;
+  returnNode->next = NULL;
+  return returnNode;  
+
+}
+
+node *compress::combineTwoNodes(node *firstNode,node *secondNode){
+  node *newNode = new node;
+  newNode->info = 't';
+  if(newNode == NULL){
+    cerr << "Couldn't allocte space for new node";
+    return NULL;
+  }
+  newNode->weight = firstNode->weight + secondNode->weight;
+  newNode->left = firstNode;
+  newNode->right = secondNode;
+  return newNode;
+}
+
+void compress::constructTree(){
+  node *interNode;
+  while(priority_Head->next != NULL){
+    interNode = dequeuePrior();
+    interNode = combineTwoNodes(interNode,dequeuePrior());
+    enqueueTree(interNode);
+  }
+}
+ 
+void compress::preTravTree(node *head){
+  if(head->left == NULL){
+    cout << head->info << " "; 
+    return;
+  }
+  preTravTree(head->left);
+  preTravTree(head->right);
+}
+
+
+
+
+
