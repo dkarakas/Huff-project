@@ -322,27 +322,30 @@ void compress::emptyW(){
     fileToOutput << char_to_be_written;
 
   }
-  char_to_be_written = 0xFF;
+  char_to_be_written = 0x00;
   num_written_char = 0;
 }
 void compress::writeFile(){
   char readChar;
-  file.seekg(file.beg);
-
+  file.clear();
+  file.seekg(0,file.beg);
   while(file.get(readChar)){
-    unsigned char char_from_tree = (unsigned char) readChar;
-    unsigned char mask = 1 << (CHAR_SIZE - 1);
-    for(short i = 0;  i < CHAR_SIZE; i++){
+    cout << "To output2: " << readChar << " bit encoding :" ;
+    unsigned char char_from_tree = (unsigned char) weight2[(int)readChar].char_to_be_w;
+    unsigned char mask = 1 << ((weight2[(int)readChar].bits) - 1);
+    for(short i = weight2[(int)readChar].bits;  i > 0; i--){
       short result = char_from_tree & mask;
       if(result == 0){
         num_written_char++;
+        cout << "0";
         if( num_written_char == 8){
           fileToOutput << (unsigned char)char_to_be_written;
           char_to_be_written = 0x00;
           num_written_char = 0;  
         }       
       }else{
-        bit_to_be_written = 1 << ( CHAR_SIZE - num_written_char - 1);
+        cout << "1";
+        bit_to_be_written = 1 << (CHAR_SIZE - num_written_char - 1);
         num_written_char++;
         char_to_be_written = char_to_be_written | bit_to_be_written;
         if( num_written_char == 8){
@@ -353,6 +356,7 @@ void compress::writeFile(){
       }
      mask = mask >> 1;
     } 
+      cout << endl;
    //++weight[(int)readChar];
   }
   cout << endl;
