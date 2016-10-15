@@ -44,6 +44,7 @@ class compress{
    void emptyW();
    void createTable(node *);
    void writeFile();
+   void emptyWEOF();
 
 
   private:

@@ -30,6 +30,7 @@ int main(int argc, char *argv[]){
   comp.createTable(comp.getHead());
   //work until here
   comp.writeFile();
+  comp.emptyWEOF();
   comp.emptyW();
   
   //comp.tWeights();
@@ -318,7 +319,7 @@ void compress::createTable(node *head){
 
 void compress::emptyW(){
   //empties if there is anything unprinted
-  if(char_to_be_written != 0){
+  if(num_written_char != 0){
     fileToOutput << char_to_be_written;
 
   }
@@ -361,4 +362,36 @@ void compress::writeFile(){
   }
   cout << endl;
 
+}
+
+void compress::emptyWEOF(){
+    unsigned char char_from_tree = (unsigned char) weight2[26].char_to_be_w;
+    unsigned char mask = 1 << ((weight2[26].bits) - 1);
+    for(short i = weight2[26].bits;  i > 0; i--){
+     
+      short result = char_from_tree & mask;
+      if(result == 0){
+        num_written_char++;
+        cout << "0";
+        if( num_written_char == 8){
+          fileToOutput << (unsigned char)char_to_be_written;
+          char_to_be_written = 0x00;
+          num_written_char = 0;  
+        }       
+      }else{
+        cout << "1";
+        bit_to_be_written = 1 << (CHAR_SIZE - num_written_char - 1);
+        num_written_char++;
+        char_to_be_written = char_to_be_written | bit_to_be_written;
+        if( num_written_char == 8){
+          fileToOutput << (unsigned char)char_to_be_written;
+          char_to_be_written = 0x00;
+          num_written_char = 0;  
+        }
+      }
+     mask = mask >> 1;
+    } 
+      cout << "CHARS Written: " << num_written_char << " ";
+      cout << endl;
+   //++weight[(int)readChar];
 }
