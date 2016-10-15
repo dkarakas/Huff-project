@@ -17,7 +17,11 @@ class node{
     long int weight;
 };
 
-
+class table{
+ public:
+   long int char_to_be_w;
+   short bits;
+};
 class compress{
   public:
    bool fileOpen(char *fileName);
@@ -30,18 +34,28 @@ class compress{
    void createPriorityQueue();
    void enqueuePrior(long int, char);
    void enqueueTree(node *);
-   node *dequeuePrior();//not implemented
-   node *combineTwoNodes(node *, node*);//not implemented
+   node *dequeuePrior();
+   node *combineTwoNodes(node *, node*);
    void printQueue();
    void constructTree();
    void preTravTree(node *);
+   void saveTree(node*);
    node *getHead(){return priority_Head;};
+   void emptyW();
+   void createTable(node *);
+   void writeFile();
 
 
   private:
-   node *priority_Head;
-   std::fstream file;
-   long int weight[256];
+   node *priority_Head; //is the head of the huff tree 
+   std::fstream file; //will contain the file to be the outputed
+   unsigned long int save_temp_bits;//creating a table
+   std::fstream fileToOutput;
+	 long int weight[256]; //will contain how many time I see char in the first read
+   table weight2[256]; //will contain how many time I see char in the first read
+   unsigned char char_to_be_written; //will contain a stream of bit to be written
+   short num_written_char; // number of bits that are written in char_to_be_written
+   unsigned char bit_to_be_written; // the exact number to be written
 };
 
 

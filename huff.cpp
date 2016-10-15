@@ -1,5 +1,6 @@
 #include "huff.h"
 
+#define  CHAR_SIZE 8
 
 using namespace std;
 
@@ -11,40 +12,49 @@ int main(int argc, char *argv[]){
     return 1;
   }
   if(!comp.fileOpen(argv[1])){
-    cerr << "Failed to open file \n";
+    cerr << "Failed to open file2 \n";
     return 1;
   }
 
   comp.weights();
   comp.createPriorityQueue();
+  comp.enqueuePrior(1,26);
+  //comp.pushEOF();
   comp.printQueue();
   cout << endl;
   comp.constructTree();
   comp.preTravTree(comp.getHead());
   cout << endl;
+  comp.saveTree(comp.getHead());
+  comp.emptyW();
+  comp.createTable(comp.getHead());
+  //work until here
+  comp.writeFile();
+  comp.emptyW();
+  
   //comp.tWeights();
   return 0;
 }
-
-
-
-
 
 
 //COMPRESS CLASSS
 
 compress::compress(){
      
-     //initilize the weight array
-     for(int i = 0; i < 256; i++){weight[i] = 0;}
+   //initilize the weight array
+   for(int i = 0; i < 256; i++){weight[i] = 0;}
     
-     priority_Head = NULL;
+   priority_Head = NULL;
+   char_to_be_written = 0x00;
+   num_written_char = 0;
 }
 
 compress::~compress(){
    //closes the file at the end
    if(file != NULL)
      file.close();
+   if(fileToOutput != NULL)
+     fileToOutput.close();
 }
 
 bool compress::fileOpen(char *fileName){
@@ -52,6 +62,10 @@ bool compress::fileOpen(char *fileName){
   file.open(fileName, fstream::in);
   if(file == NULL){
     return 0;
+  }
+  fileToOutput.open("huffOutput", fstream::out);
+  if(fileToOutput == NULL){
+    return 1;
   }
   return 1;
 }
@@ -209,7 +223,138 @@ void compress::preTravTree(node *head){
   preTravTree(head->right);
 }
 
+void compress::saveTree(node *head){
+  if(head != NULL)
+    cout << "weight" << head->weight;
+  if(head == NULL){
+    cerr<< " You screwed up " << endl;
+    return;
+  }
+  if(head->left == NULL && head->right == NULL){
+    //if we reach a leaf node I need to print a bit with 1
+    bit_to_be_written = 1 << ( CHAR_SIZE - num_written_char - 1);
+    num_written_char++;
+    //move tha character to the current stream of bit to be written
+    char_to_be_written = char_to_be_written | bit_to_be_written;
+    if( num_written_char == 8){
+      fileToOutput << (unsigned char)char_to_be_written;
+      char_to_be_written = 0x00;
+      num_written_char = 0;  
+    }
+    unsigned char char_from_tree = (unsigned char) head->info;
+    unsigned char mask = 1 << (CHAR_SIZE - 1);
+    for(short i = 0;  i < CHAR_SIZE; i++){
+      short result = char_from_tree & mask;
+      if(result == 0){
+        num_written_char++;
+        if( num_written_char == 8){
+          fileToOutput << (unsigned char)char_to_be_written;
+          char_to_be_written = 0x00;
+          num_written_char = 0;  
+        }       
+      }else{
+        bit_to_be_written = 1 << ( CHAR_SIZE - num_written_char - 1);
+        num_written_char++;
+        char_to_be_written = char_to_be_written | bit_to_be_written;
+        if( num_written_char == 8){
+          fileToOutput << (unsigned char)char_to_be_written;
+          char_to_be_written = 0x00;
+          num_written_char = 0;  
+        }
+      }
+     mask = mask >> 1;
+    } 
+    return;
+  }else if(head->left == NULL || head->right == NULL){
+    cerr << "Something unexpected happened";
+    return;
+  }
+  saveTree(head->left);
+  saveTree(head->right);
+  num_written_char++;
+  if( num_written_char == 8){
+    fileToOutput << (unsigned char)char_to_be_written;
+    char_to_be_written = 0x00;
+    num_written_char = 0;  
+  }
+}
+
+void compress::createTable(node *head){
+  if(head->left == NULL && head->right == NULL){
+    cout << "Char :" << head->info << " encoded ";
+    weight2[(int)head->info].char_to_be_w = char_to_be_written;
+    weight2[(int)head->info].bits = num_written_char;
+    unsigned char char_from_tree = (unsigned char) weight2[(int)head->info].char_to_be_w;
+    unsigned char mask = 1 << (CHAR_SIZE - 1);
+    for(short i = 0;  i < CHAR_SIZE; i++){
+      short result = char_from_tree & mask;
+      if(result == 0){
+        cout << "0";
+      }else{
+        cout << "1";
+      }
+     mask = mask >> 1;
+    } 
 
 
 
 
+  cout<< " Bits in seq: " << num_written_char;
+    cout << endl;
+  return;
+  }
+  num_written_char++;
+  char_to_be_written = char_to_be_written << 1;
+  createTable(head->left);
+  //char_to_be_written = char_to_be_written << 1;
+  unsigned long int bit_input = 1 << (0);
+  char_to_be_written = char_to_be_written | bit_input;
+  createTable(head->right);
+  num_written_char--;
+  char_to_be_written = char_to_be_written >> 1;
+}
+
+
+
+void compress::emptyW(){
+  //empties if there is anything unprinted
+  if(char_to_be_written != 0){
+    fileToOutput << char_to_be_written;
+
+  }
+  char_to_be_written = 0xFF;
+  num_written_char = 0;
+}
+void compress::writeFile(){
+  char readChar;
+  file.seekg(file.beg);
+
+  while(file.get(readChar)){
+    unsigned char char_from_tree = (unsigned char) readChar;
+    unsigned char mask = 1 << (CHAR_SIZE - 1);
+    for(short i = 0;  i < CHAR_SIZE; i++){
+      short result = char_from_tree & mask;
+      if(result == 0){
+        num_written_char++;
+        if( num_written_char == 8){
+          fileToOutput << (unsigned char)char_to_be_written;
+          char_to_be_written = 0x00;
+          num_written_char = 0;  
+        }       
+      }else{
+        bit_to_be_written = 1 << ( CHAR_SIZE - num_written_char - 1);
+        num_written_char++;
+        char_to_be_written = char_to_be_written | bit_to_be_written;
+        if( num_written_char == 8){
+          fileToOutput << (unsigned char)char_to_be_written;
+          char_to_be_written = 0x00;
+          num_written_char = 0;  
+        }
+      }
+     mask = mask >> 1;
+    } 
+   //++weight[(int)readChar];
+  }
+  cout << endl;
+
+}
