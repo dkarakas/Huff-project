@@ -51,6 +51,7 @@ class compress{
    node *stack_pop();
    void stack_push(node *);
    node *getHeadStack(){return stack_aux;};
+   void decomp();
 
 
   private:
