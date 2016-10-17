@@ -67,10 +67,6 @@ void compress::read_file(){
    int result = read_char & mask;
    num_bit_read++;
    if(result == 0){
-     if(num_bit_read >= 8){
-       num_bit_read = 0;
-       file >> read_char;
-     }
      node * firstNode = stack_pop();
      node * secondNode = stack_pop();
      if(secondNode == NULL){
@@ -78,6 +74,11 @@ void compress::read_file(){
        not_done = false;
        break;
      }
+     if(num_bit_read >= 8){
+       num_bit_read = 0;
+       file >> read_char;
+     }
+
      node * new_node = combineTwoNodes(secondNode, firstNode);
      stack_push(new_node);
    }else{
@@ -119,16 +120,18 @@ void compress::decomp(){
           cur_loc_tree = cur_loc_tree->left;
           if(cur_loc_tree->left == NULL || cur_loc_tree->right == NULL){
             if(cur_loc_tree->info != 26){
+              cout << cur_loc_tree->info<<".";
               fileToOutput << cur_loc_tree->info;
-            }else{ end = true;}
+            }else{cout << "HIT"; end = true;break;}
             cur_loc_tree = stack_aux;
           }
        }else{
           cur_loc_tree = cur_loc_tree->right;
           if(cur_loc_tree->left == NULL || cur_loc_tree->right == NULL){
             if(cur_loc_tree->info != 26){
+              cout << cur_loc_tree->info;
               fileToOutput << cur_loc_tree->info;
-            }else{ end = true;}
+            }else{cout << "HIT"; end = true;break;}
             cur_loc_tree = stack_aux;
           }
        }
