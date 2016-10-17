@@ -24,6 +24,7 @@ class table{
 };
 class compress{
   public:
+   //huff function
    bool fileOpen(char *fileName);
    void weights();
    void tWeights();
@@ -45,9 +46,15 @@ class compress{
    void createTable(node *);
    void writeFile();
    void emptyWEOF();
+   //unhuff function
+   void read_file();
+   node *stack_pop();
+   void stack_push(node *);
+   node *getHeadStack(){return stack_aux;};
 
 
   private:
+   //huff function
    node *priority_Head; //is the head of the huff tree 
    std::fstream file; //will contain the file to be the outputed
    unsigned long int save_temp_bits;//creating a table
@@ -57,6 +64,10 @@ class compress{
    unsigned char char_to_be_written; //will contain a stream of bit to be written
    short num_written_char; // number of bits that are written in char_to_be_written
    unsigned char bit_to_be_written; // the exact number to be written
+   //unhuff function
+   unsigned char read_char;
+   short num_bit_read;
+   node *stack_aux;
 };
 
 
