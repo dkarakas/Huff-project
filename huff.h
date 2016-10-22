@@ -19,7 +19,7 @@ class node{
 
 class table{
  public:
-   long int char_to_be_w;
+   unsigned long int char_to_be_w;
    short bits;
 };
 class compress{
