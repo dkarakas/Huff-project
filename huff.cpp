@@ -47,6 +47,7 @@ compress::compress(){
     
    priority_Head = NULL;
    char_to_be_written = 0x00;
+   int_to_be_written = 0;
    num_written_char = 0;
 }
 
@@ -225,8 +226,6 @@ void compress::preTravTree(node *head){
 }
 
 void compress::saveTree(node *head){
-  if(head != NULL)
-    cout << "weight" << head->weight;
   if(head == NULL){
     cerr<< " You screwed up " << endl;
     return;
@@ -282,7 +281,7 @@ void compress::saveTree(node *head){
 
 void compress::createTable(node *head){
   if(head->left == NULL && head->right == NULL){
-    //cout << "Char :" << head->info << " encoded ";
+    cout << "Char :" << head->info << " encoded ";
     weight2[(int)head->info].char_to_be_w = char_to_be_written;
     weight2[(int)head->info].bits = num_written_char;
     long int char_from_tree = (long int) weight2[(int)head->info].char_to_be_w;
@@ -296,23 +295,18 @@ void compress::createTable(node *head){
       }
      mask = mask >> 1;
     } 
-
-
-
-
-  cout<< " Bits in seq: " << num_written_char;
+    cout<< " Bits in seq: " << num_written_char;
     cout << endl;
   return;
   }
   num_written_char++;
-  char_to_be_written = char_to_be_written << 1;
+  int_to_be_written = int_to_be_written << 1;
   createTable(head->left);
-  //char_to_be_written = char_to_be_written << 1;
   unsigned long int bit_input = 1 << (0);
   char_to_be_written = char_to_be_written | bit_input;
   createTable(head->right);
+  char_to_be_written = int_to_be_written >> 1;
   num_written_char--;
-  char_to_be_written = char_to_be_written >> 1;
 }
 
 

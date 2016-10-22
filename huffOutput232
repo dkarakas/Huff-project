@@ -1,1 +1,1 @@
- to Windows Hooks really was not warranted here... a hook is a way of monitoring the keyboard outside the current thread, and is not designed for normal keyboard input.dfsfreferjiurtbnvnckjxdsadqw12
+ to Windows Hooks really was not warranted here... a hook is a way of monitoring the keyboard outside the current thread, and is not designed for normal keyboard input.df

@@ -60,9 +60,10 @@ class compress{
    std::fstream file; //will contain the file to be the outputed
    unsigned long int save_temp_bits;//creating a table
    std::fstream fileToOutput;
-	 long int weight[256]; //will contain how many time I see char in the first read
+   long int weight[256]; //will contain how many time I see char in the first read
    table weight2[256]; //will contain how many time I see char in the first read
    unsigned char char_to_be_written; //will contain a stream of bit to be written
+   unsigned long int int_to_be_written;
    short num_written_char; // number of bits that are written in char_to_be_written
    unsigned char bit_to_be_written; // the exact number to be written
    //unhuff function
