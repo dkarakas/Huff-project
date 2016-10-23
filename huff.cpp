@@ -330,7 +330,7 @@ void compress::writeFile(){
   file.clear();
   file.seekg(0,file.beg);
   while(file.get(readChar)){
-    cout << "To output2: " << readChar << " bit encoding :" ;
+//    cout << "To output2: " << readChar << " bit encoding :" ;
     unsigned long int char_from_tree = weight2[(int)readChar].char_to_be_w;
     unsigned long int mask = 0;
     mask = 1 << (weight2[(int)readChar].bits - 1);
@@ -338,14 +338,14 @@ void compress::writeFile(){
       unsigned long int result = char_from_tree & mask;
       if(result == 0){
         num_written_char++;
-        cout << "0";
+        //cout << "0";
         if( num_written_char == 8){
           fileToOutput << (unsigned char)char_to_be_written;
           char_to_be_written = 0x00;
           num_written_char = 0;  
         }       
       }else{
-        cout << "1";
+        //cout << "1";
         bit_to_be_written = 1 << (CHAR_SIZE - num_written_char - 1);
         num_written_char++;
         char_to_be_written = char_to_be_written | bit_to_be_written;
@@ -357,15 +357,16 @@ void compress::writeFile(){
       }
      mask = mask >> 1;
     } 
-    cout << endl;
+    //cout << endl;
   }
-  cout << endl;
+  //cout << endl;
 
 }
 
 void compress::emptyWEOF(){
-    unsigned char char_from_tree = (unsigned char) weight2[26].char_to_be_w;
-    unsigned char mask = 1 << ((weight2[26].bits) - 1);
+    unsigned long int char_from_tree = weight2[26].char_to_be_w;
+    unsigned long int mask = 0;
+    mask = 1 << (weight2[26].bits - 1);
     for(short i = weight2[26].bits;  i > 0; i--){
      
       short result = char_from_tree & mask;
