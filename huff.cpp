@@ -369,7 +369,7 @@ void compress::emptyWEOF(){
     mask = 1 << (weight2[26].bits - 1);
     for(short i = weight2[26].bits;  i > 0; i--){
      
-      short result = char_from_tree & mask;
+      int result = char_from_tree & mask;
       if(result == 0){
         num_written_char++;
         cout << "0";
@@ -393,5 +393,4 @@ void compress::emptyWEOF(){
     } 
       cout << "CHARS Written: " << num_written_char << " ";
       cout << endl;
-   //++weight[(int)readChar];
 }
