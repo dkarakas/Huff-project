@@ -15,7 +15,7 @@ class node{
     node *left;
     node *right;
     node *next;
-    char info; 
+    unsigned char info; 
     long int weight;
 };
 

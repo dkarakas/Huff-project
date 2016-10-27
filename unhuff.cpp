@@ -129,7 +129,7 @@ void compress::decomp(){
        if(result == 0){
           cur_loc_tree = cur_loc_tree->left;
           if(cur_loc_tree->left == NULL || cur_loc_tree->right == NULL){
-            if(cur_loc_tree->info != 26){
+            if(cur_loc_tree->info != 200){
               fileToOutput << cur_loc_tree->info;
             }else{/*cout << "HIT"*/; end = true;break;}
             cur_loc_tree = stack_aux;
@@ -137,7 +137,7 @@ void compress::decomp(){
        }else{
           cur_loc_tree = cur_loc_tree->right;
           if(cur_loc_tree->left == NULL || cur_loc_tree->right == NULL){
-            if(cur_loc_tree->info != 26){
+            if(cur_loc_tree->info != 200){
               fileToOutput << cur_loc_tree->info;
             }else{/*cout << "HIT"*/; end = true;break;}
             cur_loc_tree = stack_aux;
