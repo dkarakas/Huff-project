@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <time.h>
 
 class node{
   public:

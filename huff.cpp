@@ -6,6 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[]){
   compress comp;
+  double cend,cstart;
 
   if(argc != 2){
     cerr << "Not the correct input \n";
@@ -15,24 +16,23 @@ int main(int argc, char *argv[]){
     cerr << "Failed to open file2 \n";
     return 1;
   }
-
+  cstart = (double) clock();
   comp.weights();
   comp.createPriorityQueue();
   comp.enqueuePrior(1,26);
-  //comp.pushEOF();
-  comp.printQueue();
-  cout << endl;
+  //comp.printQueue();
   comp.constructTree();
-  comp.preTravTree(comp.getHead());
-  cout << endl;
+  //comp.preTravTree(comp.getHead());
   comp.saveTree(comp.getHead());
   comp.emptyW();
-  cout << "SIZE OF INT :OGKDAS " << sizeof(unsigned int) << endl;
   comp.createTable(comp.getHead());
   //work until here
   comp.writeFile();
   comp.emptyWEOF();
   comp.emptyW();
+  cend = (double) clock();
+  cout << (cend - cstart)/CLOCKS_PER_SEC;
+  cout << endl;
   
   //comp.tWeights();
   return 0;
@@ -61,12 +61,16 @@ compress::~compress(){
 }
 
 bool compress::fileOpen(char *fileName){
+  std::string file_s(fileName);
+  std::string huff(".huff");
   //opens the file and if it is false the program gives an error
   file.open(fileName, fstream::in);
   if(!file.is_open() ){
     return 0;
   }
-  fileToOutput.open("huffOutput", fstream::out);
+  
+  file_s = file_s + huff;
+  fileToOutput.open(file_s.c_str(), fstream::out);
   if(!fileToOutput.is_open()){
     return 0;
   }
@@ -284,21 +288,22 @@ void compress::createTable(node *head){
     //cout << "Char :" << head->info << " encoded ";
     weight2[(int)head->info].char_to_be_w = int_to_be_written;
     weight2[(int)head->info].bits = num_written_char;
-    unsigned long int char_from_tree = (unsigned long int) weight2[(int)head->info].char_to_be_w;
-    unsigned long int mask = 0;
-    mask = 1 << (CHAR_SIZE*4  - 1);
-    mask = mask << 32;
-    for(short i = 0;  i < CHAR_SIZE*8; i++){
-    unsigned long int result = char_from_tree & mask;
-      if(result == 0){
-        cout << "0";
-      }else{
-        cout << "1";
-      }
-      mask = mask >> 1;
-    } 
-    cout<< " Bits in seq: " << num_written_char << "  " << head->info;
-    cout << endl;
+    //unsigned long int char_from_tree = (unsigned long int) weight2[(int)head->info].char_to_be_w;
+    //unsigned long int mask = 0;
+    //mask = 1 << (CHAR_SIZE*4  - 1);
+    //mask = mask << 32;
+    //for(short i = 0;  i < CHAR_SIZE*8; i++){
+    //unsigned long int result = char_from_tree & mask;
+
+    // if(result == 0){
+    //    cout << "0";
+    //  }else{
+    //    cout << "1";
+    //  }
+    //  mask = mask >> 1;
+    //} 
+    //cout<< " Bits in seq: " << num_written_char << "  " << head->info;
+   // cout << endl;
   return;
   }
   num_written_char++;
@@ -316,7 +321,7 @@ void compress::createTable(node *head){
 void compress::emptyW(){
   //empties if there is anything unprinted
   if(num_written_char != 0){
-    cout<<"Check OUT";
+    //cout<<"Check OUT";
     fileToOutput << char_to_be_written;
 
   }
@@ -372,14 +377,14 @@ void compress::emptyWEOF(){
       int result = char_from_tree & mask;
       if(result == 0){
         num_written_char++;
-        cout << "0";
+        //cout << "0";
         if( num_written_char == 8){
           fileToOutput << (unsigned char)char_to_be_written;
           char_to_be_written = 0x00;
           num_written_char = 0;  
         }       
       }else{
-        cout << "1";
+        //cout << "1";
         bit_to_be_written = 1 << (CHAR_SIZE - num_written_char - 1);
         num_written_char++;
         char_to_be_written = char_to_be_written | bit_to_be_written;
@@ -391,6 +396,6 @@ void compress::emptyWEOF(){
       }
      mask = mask >> 1;
     } 
-      cout << "CHARS Written: " << num_written_char << " ";
-      cout << endl;
+      //cout << "CHARS Written: " << num_written_char << " ";
+      //cout << endl;
 }
