@@ -6,6 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[]){
   compress comp;
+  double cend,cstart;
 
   if(argc != 2){
     cerr << "Not the correct input \n";
@@ -16,9 +17,14 @@ int main(int argc, char *argv[]){
     return 1;
   }
   
+  cstart = (double) clock();
   comp.read_file();
   comp.preTravTree(comp.getHeadStack());
   comp.decomp();
+
+  cend = (double) clock();
+
+  cout << ((double) cend - (double) cstart)/CLOCKS_PER_SEC<<endl;
   
   return 0;
 }
@@ -46,13 +52,16 @@ compress::~compress(){
 }
 
 bool compress::fileOpen(char *fileName){
+  std::string file_s(fileName);
+  std::string unhuff(".unhuff");
   //opens the file and if it is false the program gives an error
   file.open(fileName, fstream::in | fstream:: out | fstream::app);
   if(!file.is_open()){
-    cout << "CHEC";
     return 0;
   }
-  fileToOutput.open("huffOutput232", fstream::out);
+
+  file_s = file_s + unhuff;
+  fileToOutput.open(file_s.c_str(), fstream::out);
   if(!fileToOutput.is_open()){
     return 0;
   }
@@ -122,7 +131,7 @@ void compress::decomp(){
           if(cur_loc_tree->left == NULL || cur_loc_tree->right == NULL){
             if(cur_loc_tree->info != 26){
               fileToOutput << cur_loc_tree->info;
-            }else{cout << "HIT"; end = true;break;}
+            }else{/*cout << "HIT"*/; end = true;break;}
             cur_loc_tree = stack_aux;
           }
        }else{
@@ -130,7 +139,7 @@ void compress::decomp(){
           if(cur_loc_tree->left == NULL || cur_loc_tree->right == NULL){
             if(cur_loc_tree->info != 26){
               fileToOutput << cur_loc_tree->info;
-            }else{cout << "HIT"; end = true;break;}
+            }else{/*cout << "HIT"*/; end = true;break;}
             cur_loc_tree = stack_aux;
           }
        }
@@ -203,7 +212,7 @@ void compress::stack_push(node * newNode){
 
 void compress::preTravTree(node *head){
   if(head->left == NULL && head->right == NULL){
-    cout << head->info << " "; 
+    //cout << head->info << " "; 
     return;
   }
   preTravTree(head->left);
